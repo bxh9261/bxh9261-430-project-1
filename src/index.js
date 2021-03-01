@@ -13,8 +13,8 @@ const jsonHandler = require('./jsonResponses.js');
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
-  '/random-joke': jsonHandler.getRandomJokeResponse,
-  '/random-jokes': jsonHandler.getRandomJokeResponse,
+  '/get-characters': jsonHandler.getCharacterResponse,
+  '/get-all-characters': jsonHandler.getCharacterResponse,
   '/default-styles.css': htmlHandler.getCSSResponse,
   '/joke-client.html': htmlHandler.getJokeClientResponse,    
   notFound: htmlHandler.get404Response,
