@@ -1,7 +1,3 @@
-// using underscore.js
-// https://underscorejs.org/
-const _ = require('underscore');
-
 const characters = [
   { media: 'Spongebob', char: 'Spongebob', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/3/3b/SpongeBob_SquarePants_character.svg/1200px-SpongeBob_SquarePants_character.svg.png' },
   { media: 'Spongebob', char: 'Patrick', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/3/33/Patrick_Star.svg/1200px-Patrick_Star.svg.png' },
@@ -12,7 +8,7 @@ const characters = [
   { media: 'Spongebob', char: 'Gary', img: 'https://static.wikia.nocookie.net/nickelodeon/images/7/76/Gary_in_2018.png' },
   { media: 'Spongebob', char: 'Sandy', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a0/Sandy_Cheeks.svg/1200px-Sandy_Cheeks.svg.png' },
   { media: 'Spongebob', char: 'Mrs. Puff', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/c/ce/Mrs._Puff.svg/1200px-Mrs._Puff.svg.png' },
-    
+
   { media: 'CelesteQuest', char: 'Mabel', img: 'https://i.imgur.com/6xohxbl.png' },
   { media: 'CelesteQuest', char: 'Angela', img: 'https://i.imgur.com/XoFarO5.png' },
   { media: 'CelesteQuest', char: 'Zozo', img: 'https://i.imgur.com/Vk4Ermn.png' },
@@ -21,16 +17,16 @@ const characters = [
   { media: 'CelesteQuest', char: 'Lago', img: 'https://i.imgur.com/oeUVDKV.png' },
   { media: 'CelesteQuest', char: 'Jakei', img: 'https://i.imgur.com/2nuRwuB.png' },
   { media: 'CelesteQuest', char: 'Kyle', img: 'https://i.imgur.com/hy8B2LX.png' },
-  { media: 'CelesteQuest', char: 'William', img: 'https://i.imgur.com/h5Ecxzr.jpg' }
+  { media: 'CelesteQuest', char: 'William', img: 'https://i.imgur.com/h5Ecxzr.jpg' },
 ];
 
 const checkSet = (set = 'All') => {
-   for(let i = 0; i < characters.length; i+=1){
-       if(characters[i].media.toLowerCase() === set.toLowerCase()){
-           return set;
-       }
-   }
-   return 'All';
+  for (let i = 0; i < characters.length; i += 1) {
+    if (characters[i].media.toLowerCase() === set.toLowerCase()) {
+      return set;
+    }
+  }
+  return 'All';
 };
 
 // return in json format
@@ -40,39 +36,38 @@ const getCharactersJSON = (set = 'All') => {
   const charArray = [{ media: '', char: '', img: '' }];
   let arrayPos = 0;
 
-  for (let i = 0; i < characters.length; i+=1){
-      if(characters[i].media.toLowerCase() === setFixed.toLowerCase() || setFixed === 'All'){
-        charArray[arrayPos] = {
-            media: characters[i].media,
-            char: characters[i].char,
-            img: characters[i].img
-        };
-        arrayPos+=1;
-      }
-
+  for (let i = 0; i < characters.length; i += 1) {
+    if (characters[i].media.toLowerCase() === setFixed.toLowerCase() || setFixed === 'All') {
+      charArray[arrayPos] = {
+        media: characters[i].media,
+        char: characters[i].char,
+        img: characters[i].img,
+      };
+      arrayPos += 1;
+    }
   }
 
   return JSON.stringify(charArray);
 };
 
 // return in xml format
-const getRandomJokeXML = (limit = 1) => {
-  const limitFixed = fixLimit(limit);
-  const jokesShuffled = _.shuffle(jokes);
+const getRandomJokeXML = (set = 'All') => {
+  const setFixed = checkSet(set);
 
-  let responseXML = '<jokes>';
+  let responseXML = '';
 
-  for (let i = 0; i < limitFixed; i += 1) {
-    const jokeXML = `
-    <joke>
-        <q>${jokesShuffled[i].q}</q>
-        <a>${jokesShuffled[i].a}</a>
-    </joke>
-    `;
-    responseXML = responseXML.concat(jokeXML);
+  for (let i = 0; i < characters.length; i += 1) {
+    if (characters[i].media.toLowerCase() === setFixed.toLowerCase() || setFixed === 'All') {
+      const jokeXML = `
+        <character>
+            <media>${characters[i].media}</media>
+            <char>${characters[i].char}</char>
+            <img>${characters[i].img}</img>
+        </character>
+        `;
+      responseXML = responseXML.concat(jokeXML);
+    }
   }
-
-  responseXML = responseXML.concat('</jokes>');
 
   return responseXML;
 };
