@@ -20,6 +20,12 @@ const characters = [
   { media: 'CelesteQuest', char: 'William', img: 'https://i.imgur.com/h5Ecxzr.jpg' },
 ];
 
+const sendJSONResponse = (request, response, responseCode, object) => {
+  response.writeHead(responseCode, { 'Content-Type': 'application/json' });
+  response.write(JSON.stringify(object));
+  response.end();
+};
+
 const checkSet = (set = 'All') => {
   for (let i = 0; i < characters.length; i += 1) {
     if (characters[i].media.toLowerCase() === set.toLowerCase()) {
@@ -114,16 +120,14 @@ const addCharacter = (request, response, body) => {
     return sendJSONResponse(request, response, responseCode, responseJSON);
   }
 
-  // create new 
-  let newCharacter = {"media": body.media, "char": body.char, "img": body.img};
+  // create new
+  const newCharacter = { media: body.media, char: body.char, img: body.img };
   characters.push(newCharacter);
 
   responseCode = 201; // send "created" status code
   responseJSON.id = newCharacter.char;
   responseJSON.message = 'Created Successfully';
   return sendJSONResponse(request, response, responseCode, responseJSON);
-    
-  console.log(characters);    
 };
 
 module.exports.getCharacterResponse = getCharacterResponse;

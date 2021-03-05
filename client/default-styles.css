@@ -22,7 +22,7 @@ https://stackoverflow.com/questions/39517793/how-can-we-make-a-4-by-4-grid-using
 
 #container > div { width: 25%; height: 10vw; border: white 1px solid; }
 
-#character-images { width: 54%; display: flex; flex-direction: row; flex-wrap: wrap; background: blue; }
+#character-images { width: 54%; display: flex; flex-direction: row; flex-wrap: wrap; }
 
 #character-images > div { width: 11.11%; height: 6vw; border: white 1px solid; }
 

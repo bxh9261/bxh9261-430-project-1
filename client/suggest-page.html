@@ -1,94 +1,176 @@
 <html>
   <head>
-    <title>Alignment Chart Creator</title>
+    <title>Alignment Chart Creator</title> 
     <link href="default-styles.css" type="text/css" rel="stylesheet" />
+
     <script>
-        const addCharSet = () => {
-            const postURL = "/add-character";
-            const xhr = new XMLHttpRequest();
-            //xhr.onload = handleResponse;
-            xhr.open("POST", postURL);
-            // with XHR, after we open a connection, but before we 'send()', we can set 1 or more HTTP request headers
-            //this is not strictly necessary because "/random-joke" sends JSON by default
-            xhr.setRequestHeader('Accept', "application/javascript");
-            xhr.send(mediaTxt.textContent, charTxt[0].textContent, charImgTxt[0].textContent);
-        }
-        
-        const init = () => {
-            submitButton = document.querySelector("#submit");
-            submitButton.onclick = addCharSet;
+  	"use strict"; // because I got rid of client-side babel
+    const parseJSON = (xhr, content) => {
+    	if(xhr.response && xhr.getResponseHeader('Content-Type') === 'application/json'){
+      	const obj = JSON.parse(xhr.response);
+      	console.dir(obj);
+      	
+      	if(obj.message){
+      		content.innerHTML += `<p>${obj.message}</p>`;
+      	}
+      }
+    };
+
+    const handleResponse = (xhr) => {
+      const content = document.querySelector('#content');
+      
+      switch(xhr.status){
+      	case 200:
+      		content.innerHTML = '<b>Success!</b>';
+      		break;
+      	case 201:
+      		content.innerHTML = '<b>Created!</b>';
+      		break;
+      	case 204:
+      		content.innerHTML = '<b>Updated (No Content)!</b>';
+      		break;
+      	case 400:
+      		content.innerHTML = '<b>Bad Request!</b>';
+      		break;
+      	default:
+      		content.innerHTML = '<b>Error code not implemented by client</b>';
+      }
+      
+      parseJSON(xhr,content);
+    };
+
+    const sendPost = (e, nameForm) => {
+			e.preventDefault();
+			
+			const nameAction = nameForm.getAttribute("action");
+			const nameMethod = nameForm.getAttribute("method");
+			
+			const charField = nameForm.querySelectorAll(".char");
+			const imageField = nameForm.querySelectorAll(".charimg");
+			
+			const xhr = new XMLHttpRequest();
+			xhr.open(nameMethod,nameAction); // NEW - in the past we've been using "GET"
+			
+			xhr.setRequestHeader('Accept','application/json');
+			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+			// what is "x-www-form-urlencoded"
+			// for GET we already saw it - ex. "/unauthorized?loggedIn=yes&valid=true"
+			// everything after the question mark is urlencoded
+			// multiple key=value pairs are separated by the &
+			// HTML forms also encode their values this way
+			// in the form below the values are encoded as "name=someValue&age=someValue"
+			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
+			
+			xhr.onload = () => handleResponse(xhr);
+			
+			const formData = `media=${charField[0].value}&char=${charField[0].value}&img=${imageField[0].value}`;
             
-            mediaTxt = document.querySelector("#medianame");
-            charTxt = document.querySelectorAll(".char");
-            charImgTxt = document.querySelectorAll(".charimg");
-        } 
-    </script>  
+			xhr.send(formData); // NEW - in the past we haven't been sending anything here because ...
+			// ... our data has always been encoded in the URL
+			/// ... instead of being in a separate file as it is now
+			
+			/*
+				Things to try:
+				1) Add new users, we should see "201 Created" status code
+				- look in the Request tab of the debugger to see the form data
+				- Recall that every time the server reboots we lose our data because `users` in jsonResponses.js is re-initialized 
+				2) Update a new user (i.e. send the same name) again - we'll see "204 No Content"
+				3) Leave off name or age and get back a "400 Bad Request"
+				4) In the debugger, you can see that the Network request is being made via XHR
+				5) Disable the XHR and you can see the Network request is being made via the form (and we're getting taken to a new page)
+				6) Re-enable the XHR and get rid of the `action` and `method` of the form and make the XHR work
+			*/
+			
+			return false; // prevents event bubbling
+    };
+
+    const init = () => {
+      const nameForm = document.querySelector('#nameForm');
+      
+      const addUser = (e) => sendPost(e, nameForm);
+      
+     	nameForm.addEventListener('submit', addUser);
+    };
+
+    window.onload = init;
+
+  </script>  
   </head>
   <body>
     <header>
       <h1>Alignment Chart Creator</h1>
     </header>
       
+  <section id="top">
+    <h3>POST Status Code Tests</h3>
+    <form id="nameForm" action="/add-character" method="post">
+        <label for="medianame">Name of Media</label>
+      <input type="text" id="medianame" name="medianame"><br><br><br>
+
+      <div id="char1div">
+          <label for="char1">Character 1:</label>
+          <input type="text" class="char" name="char1"><br>
+          <label for="char1img">Character 1 Image URL:</label>
+          <input type="text" class="charimg" name="char1img"><br><br>    
+      </div>
+      <div id="char2div">
+          <label for="char2">Character 2:</label>
+          <input type="text" class="char" name="char2"><br>
+          <label for="char2img">Character 2 Image URL:</label>
+          <input type="text" class="charimg" name="char2img"><br><br>    
+      </div>
+      <div id="char3div">
+          <label for="char3">Character 3:</label>
+          <input type="text" class="char" name="char3"><br>
+          <label for="char3img">Character 3 Image URL:</label>
+          <input type="text" class="charimg" name="char3img"><br><br>    
+      </div>
+      <div id="char4div">
+          <label for="char4">Character 4:</label>
+          <input type="text" class="char" name="char4"><br>
+          <label for="char4img">Character 4 Image URL:</label>
+          <input type="text" class="charimg" name="char4img"><br><br>    
+      </div>
+      <div id="char5div">
+          <label for="char5">Character 5:</label>
+          <input type="text" class="char" name="char5"><br>
+          <label for="char5img">Character 5 Image URL:</label>
+          <input type="text" class="charimg" name="char5img"><br><br>    
+      </div>    
+      <div id="char6div">
+          <label for="char6">Character 6:</label>
+          <input type="text" class="char" name="char6"><br>
+          <label for="char6img">Character 6 Image URL:</label>
+          <input type="text" class="charimg" name="char6img"><br><br>    
+      </div>
+      <div id="char7div">
+          <label for="char7">Character 7:</label>
+          <input type="text" class="char" name="char7"><br>
+          <label for="char7img">Character 7 Image URL:</label>
+          <input type="text" class="charimg" name="char7img"><br><br>    
+      </div>
+      <div id="char8div">
+          <label for="char8">Character 8:</label>
+          <input type="text" class="char" name="char8"><br>
+          <label for="char8img">Character 8 Image URL:</label>
+          <input type="text" class="charimg" name="char8img"><br><br>    
+      </div>
+      <div id="char9div">
+          <label for="char9">Character 9:</label>
+          <input type="text" class="char" name="char9"><br>
+          <label for="char9img">Character 9 Image URL:</label>
+          <input type="text" class="charimg" name="char9img"><br><br>    
+      </div>
+        
+      <input type="submit" value="Add User" />
+    </form>
+    <p>Go to <a href="/getUsers">/get-all-characters</a> to see users.</p>
+  </section>
+  <section id="content">
+  </section>   
+      
 <div id="form">
-  <label for="medianame">Name of Media</label>
-  <input type="text" id="medianame" name="medianame"><br><br><br>
-    
-  <div id="char1div">
-      <label for="char1">Character 1:</label>
-      <input type="text" class="char" name="char1"><br>
-      <label for="char1img">Character 1 Image URL:</label>
-      <input type="text" class="charimg" name="char1img"><br><br>    
-  </div>
-  <div id="char2div">
-      <label for="char2">Character 2:</label>
-      <input type="text" class="char" name="char2"><br>
-      <label for="char2img">Character 2 Image URL:</label>
-      <input type="text" class="charimg" name="char2img"><br><br>    
-  </div>
-  <div id="char3div">
-      <label for="char3">Character 3:</label>
-      <input type="text" class="char" name="char3"><br>
-      <label for="char3img">Character 3 Image URL:</label>
-      <input type="text" class="charimg" name="char3img"><br><br>    
-  </div>
-  <div id="char4div">
-      <label for="char4">Character 4:</label>
-      <input type="text" class="char" name="char4"><br>
-      <label for="char4img">Character 4 Image URL:</label>
-      <input type="text" class="charimg" name="char4img"><br><br>    
-  </div>
-  <div id="char5div">
-      <label for="char5">Character 5:</label>
-      <input type="text" class="char" name="char5"><br>
-      <label for="char5img">Character 5 Image URL:</label>
-      <input type="text" class="charimg" name="char5img"><br><br>    
-  </div>    
-  <div id="char6div">
-      <label for="char6">Character 6:</label>
-      <input type="text" class="char" name="char6"><br>
-      <label for="char6img">Character 6 Image URL:</label>
-      <input type="text" class="charimg" name="char6img"><br><br>    
-  </div>
-  <div id="char7div">
-      <label for="char7">Character 7:</label>
-      <input type="text" class="char" name="char7"><br>
-      <label for="char7img">Character 7 Image URL:</label>
-      <input type="text" class="charimg" name="char7img"><br><br>    
-  </div>
-  <div id="char8div">
-      <label for="char8">Character 8:</label>
-      <input type="text" class="char" name="char8"><br>
-      <label for="char8img">Character 8 Image URL:</label>
-      <input type="text" class="charimg" name="char8img"><br><br>    
-  </div>
-  <div id="char9div">
-      <label for="char9">Character 9:</label>
-      <input type="text" class="char" name="char9"><br>
-      <label for="char9img">Character 9 Image URL:</label>
-      <input type="text" class="charimg" name="char9img"><br><br>    
-  </div>
-    
-  <input id="submit" type="submit" value="Submit">
+
 </div>
     
   </body>

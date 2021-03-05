@@ -1,5 +1,3 @@
-console.log('First web service starting up ...');
-
 // 1 - pull in the HTTP server module
 const http = require('http');
 
@@ -16,36 +14,10 @@ const urlStruct = {
   '/get-characters': jsonHandler.getCharacterResponse,
   '/get-all-characters': jsonHandler.getCharacterResponse,
   '/default-styles.css': htmlHandler.getCSSResponse,
-  '/main-app.js': htmlHandler.getMainAppJSResponse,    
+  '/main-app.js': htmlHandler.getMainAppJSResponse,
   '/app': htmlHandler.getMainAppResponse,
   '/suggest': htmlHandler.getSuggestResponse,
   notFound: htmlHandler.get404Response,
-};
-
-// 7 - this is the function that will be called every time a client request comes in
-// this time we will look at the `pathname`, and send back the appropriate page
-// note that in this course we'll be using arrow functions 100% of the time in our server-side code
-const onRequest = (request, response) => {
-  let acceptedTypes = request.headers.accept && request.headers.accept.split(',');
-  acceptedTypes = acceptedTypes || [];
-
-  const parsedUrl = url.parse(request.url);
-  const { pathname } = parsedUrl;
-  const params = query.parse(parsedUrl.query);
-
-  const httpMethod = request.method;
-    
-  if (request.method === 'POST') {
-    // handle POST
-    handlePost(request, response, parsedUrl);
-    return; // bail out of function
-  }    
-
-  if (urlStruct[pathname]) {
-    urlStruct[pathname](request, response, params, acceptedTypes, httpMethod);
-  } else {
-    urlStruct.notFound(request, response);
-  }
 };
 
 const handlePost = (request, response, parsedUrl) => {
@@ -65,13 +37,40 @@ const handlePost = (request, response, parsedUrl) => {
 
     request.on('end', () => {
       const bodyString = Buffer.concat(body).toString(); // name=tony&age=35
+
       const bodyParams = query.parse(bodyString); // turn into an object with .name & .age
       jsonHandler.addCharacter(request, response, bodyParams);
     });
   }
 };
 
+// 7 - this is the function that will be called every time a client request comes in
+// this time we will look at the `pathname`, and send back the appropriate page
+// note that in this course we'll be using arrow functions 100% of the time in our server-side code
+const onRequest = (request, response) => {
+  let acceptedTypes = request.headers.accept && request.headers.accept.split(',');
+  acceptedTypes = acceptedTypes || [];
+
+  const parsedUrl = url.parse(request.url);
+  const { pathname } = parsedUrl;
+  const params = query.parse(parsedUrl.query);
+
+  const httpMethod = request.method;
+
+  if (request.method === 'POST') {
+    // handle POST
+    handlePost(request, response, parsedUrl);
+    return; // bail out of function
+  }
+
+  if (urlStruct[pathname]) {
+    urlStruct[pathname](request, response, params, acceptedTypes, httpMethod);
+  } else {
+    urlStruct.notFound(request, response);
+  }
+};
+
 // 8 - create the server, hook up the request handling function, and start listening on `port`
 http.createServer(onRequest).listen(port);
 
-// console.log(`Listening on 127.0.0.1: ${port}`);
+//
