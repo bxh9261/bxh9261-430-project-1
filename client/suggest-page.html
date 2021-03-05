@@ -1,0 +1,95 @@
+<html>
+  <head>
+    <title>Alignment Chart Creator</title>
+    <link href="default-styles.css" type="text/css" rel="stylesheet" />
+    <script>
+        const addCharSet = () => {
+            const postURL = "/add-character";
+            const xhr = new XMLHttpRequest();
+            //xhr.onload = handleResponse;
+            xhr.open("POST", postURL);
+            // with XHR, after we open a connection, but before we 'send()', we can set 1 or more HTTP request headers
+            //this is not strictly necessary because "/random-joke" sends JSON by default
+            xhr.setRequestHeader('Accept', "application/javascript");
+            xhr.send(mediaTxt.textContent, charTxt[0].textContent, charImgTxt[0].textContent);
+        }
+        
+        const init = () => {
+            submitButton = document.querySelector("#submit");
+            submitButton.onclick = addCharSet;
+            
+            mediaTxt = document.querySelector("#medianame");
+            charTxt = document.querySelectorAll(".char");
+            charImgTxt = document.querySelectorAll(".charimg");
+        } 
+    </script>  
+  </head>
+  <body>
+    <header>
+      <h1>Alignment Chart Creator</h1>
+    </header>
+      
+<div id="form">
+  <label for="medianame">Name of Media</label>
+  <input type="text" id="medianame" name="medianame"><br><br><br>
+    
+  <div id="char1div">
+      <label for="char1">Character 1:</label>
+      <input type="text" class="char" name="char1"><br>
+      <label for="char1img">Character 1 Image URL:</label>
+      <input type="text" class="charimg" name="char1img"><br><br>    
+  </div>
+  <div id="char2div">
+      <label for="char2">Character 2:</label>
+      <input type="text" class="char" name="char2"><br>
+      <label for="char2img">Character 2 Image URL:</label>
+      <input type="text" class="charimg" name="char2img"><br><br>    
+  </div>
+  <div id="char3div">
+      <label for="char3">Character 3:</label>
+      <input type="text" class="char" name="char3"><br>
+      <label for="char3img">Character 3 Image URL:</label>
+      <input type="text" class="charimg" name="char3img"><br><br>    
+  </div>
+  <div id="char4div">
+      <label for="char4">Character 4:</label>
+      <input type="text" class="char" name="char4"><br>
+      <label for="char4img">Character 4 Image URL:</label>
+      <input type="text" class="charimg" name="char4img"><br><br>    
+  </div>
+  <div id="char5div">
+      <label for="char5">Character 5:</label>
+      <input type="text" class="char" name="char5"><br>
+      <label for="char5img">Character 5 Image URL:</label>
+      <input type="text" class="charimg" name="char5img"><br><br>    
+  </div>    
+  <div id="char6div">
+      <label for="char6">Character 6:</label>
+      <input type="text" class="char" name="char6"><br>
+      <label for="char6img">Character 6 Image URL:</label>
+      <input type="text" class="charimg" name="char6img"><br><br>    
+  </div>
+  <div id="char7div">
+      <label for="char7">Character 7:</label>
+      <input type="text" class="char" name="char7"><br>
+      <label for="char7img">Character 7 Image URL:</label>
+      <input type="text" class="charimg" name="char7img"><br><br>    
+  </div>
+  <div id="char8div">
+      <label for="char8">Character 8:</label>
+      <input type="text" class="char" name="char8"><br>
+      <label for="char8img">Character 8 Image URL:</label>
+      <input type="text" class="charimg" name="char8img"><br><br>    
+  </div>
+  <div id="char9div">
+      <label for="char9">Character 9:</label>
+      <input type="text" class="char" name="char9"><br>
+      <label for="char9img">Character 9 Image URL:</label>
+      <input type="text" class="charimg" name="char9img"><br><br>    
+  </div>
+    
+  <input id="submit" type="submit" value="Submit">
+</div>
+    
+  </body>
+</html>

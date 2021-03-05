@@ -2,7 +2,9 @@ const fs = require('fs');
 
 const errorPage = fs.readFileSync(`${__dirname}/../client/error.html`);
 const aquaStyle = fs.readFileSync(`${__dirname}/../client/default-styles.css`);
-const jokePage = fs.readFileSync(`${__dirname}/../client/joke-client.html`);
+const mainPage = fs.readFileSync(`${__dirname}/../client/main-app.html`);
+const mainPageJS = fs.readFileSync(`${__dirname}/main-app.js`);
+const suggestPage = fs.readFileSync(`${__dirname}/../client/suggest-page.html`);
 
 const get404Response = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/html' });
@@ -16,12 +18,26 @@ const getCSSResponse = (request, response) => {
   response.end();
 };
 
-const getJokeClientResponse = (request, response) => {
+const getMainAppResponse = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/html' });
-  response.write(jokePage);
+  response.write(mainPage);
+  response.end();
+};
+
+const getMainAppJSResponse = (request, response) => {
+  response.writeHead(200, { 'Content-Type': 'text/javascript' });
+  response.write(mainPageJS);
+  response.end();
+};
+
+const getSuggestResponse = (request, response) => {
+  response.writeHead(200, { 'Content-Type': 'text/html' });
+  response.write(suggestPage);
   response.end();
 };
 
 module.exports.get404Response = get404Response;
 module.exports.getCSSResponse = getCSSResponse;
-module.exports.getJokeClientResponse = getJokeClientResponse;
+module.exports.getMainAppResponse = getMainAppResponse;
+module.exports.getMainAppJSResponse = getMainAppJSResponse;
+module.exports.getSuggestResponse = getSuggestResponse;

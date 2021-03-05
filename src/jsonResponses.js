@@ -101,4 +101,30 @@ const getCharacterResponse = (request, response, params, acceptedTypes, httpMeth
   response.end();
 };
 
+const addCharacter = (request, response, body) => {
+  // here we are assuming an error, pessimistic aren't we?
+  let responseCode = 400; // 400=bad request
+  const responseJSON = {
+    id: 'missingParams',
+    message: 'media name, character name, and img are all required',
+  };
+
+  // missing params?
+  if (!body.media || !body.char || !body.img) {
+    return sendJSONResponse(request, response, responseCode, responseJSON);
+  }
+
+  // create new 
+  let newCharacter = {"media": body.media, "char": body.char, "img": body.img};
+  characters.push(newCharacter);
+
+  responseCode = 201; // send "created" status code
+  responseJSON.id = newCharacter.char;
+  responseJSON.message = 'Created Successfully';
+  return sendJSONResponse(request, response, responseCode, responseJSON);
+    
+  console.log(characters);    
+};
+
 module.exports.getCharacterResponse = getCharacterResponse;
+module.exports.addCharacter = addCharacter;

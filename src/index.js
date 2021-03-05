@@ -16,7 +16,9 @@ const urlStruct = {
   '/get-characters': jsonHandler.getCharacterResponse,
   '/get-all-characters': jsonHandler.getCharacterResponse,
   '/default-styles.css': htmlHandler.getCSSResponse,
-  '/joke-client.html': htmlHandler.getJokeClientResponse,
+  '/main-app.js': htmlHandler.getMainAppJSResponse,    
+  '/app': htmlHandler.getMainAppResponse,
+  '/suggest': htmlHandler.getSuggestResponse,
   notFound: htmlHandler.get404Response,
 };
 
@@ -32,11 +34,40 @@ const onRequest = (request, response) => {
   const params = query.parse(parsedUrl.query);
 
   const httpMethod = request.method;
+    
+  if (request.method === 'POST') {
+    // handle POST
+    handlePost(request, response, parsedUrl);
+    return; // bail out of function
+  }    
 
   if (urlStruct[pathname]) {
     urlStruct[pathname](request, response, params, acceptedTypes, httpMethod);
   } else {
     urlStruct.notFound(request, response);
+  }
+};
+
+const handlePost = (request, response, parsedUrl) => {
+  if (parsedUrl.pathname === '/add-character') {
+    const body = [];
+
+    // https://nodejs.org/api/http.html
+    request.on('error', (err) => {
+      console.dir(err);
+      response.statusCode = 400;
+      response.end();
+    });
+
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    });
+
+    request.on('end', () => {
+      const bodyString = Buffer.concat(body).toString(); // name=tony&age=35
+      const bodyParams = query.parse(bodyString); // turn into an object with .name & .age
+      jsonHandler.addCharacter(request, response, bodyParams);
+    });
   }
 };
 
