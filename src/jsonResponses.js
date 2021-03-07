@@ -24,6 +24,12 @@ const sendJSONResponse = (request, response, responseCode, object) => {
   response.writeHead(responseCode, { 'Content-Type': 'application/json' });
   response.write(JSON.stringify(object));
   response.end();
+}; 
+
+// "Meta" refers to *meta data*, in this case the HTTP headers
+const sendJSONResponseMeta = (request, response, responseCode) => {
+  response.writeHead(responseCode, { 'Content-Type': 'application/json' });
+  response.end();
 };
 
 const checkSet = (set = 'All') => {
@@ -119,9 +125,18 @@ const addCharacter = (request, response, body) => {
   if (!body.media || !body.char || !body.img) {
     return sendJSONResponse(request, response, responseCode, responseJSON);
   }
-
-  // create new
+    
+  // we got params but this character already exists, update image
   const newCharacter = { media: body.media, char: body.char, img: body.img };
+  for (let i = 0; i < characters.length; i+=1){
+      if(characters[i].media === newCharacter.media && characters[i].name === newCharacter.name){
+          responseCode = 204;
+          characters[i].img = newCharacter.img;
+          return sendJSONResponseMeta(request, response, responseCode);
+      }
+  }
+
+  // character is new, create new
   characters.push(newCharacter);
 
   responseCode = 201; // send "created" status code
