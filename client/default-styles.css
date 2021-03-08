@@ -30,3 +30,8 @@ img{
     max-width: 100%;
     max-height: 100%;
 }
+
+
+#characters-admin { width: 54%; display: flex; flex-direction: row; flex-wrap: wrap; }
+
+#characters-admin > div { width: 11.11%; height: 10vw; border: 2px solid #ccc; margin:10px; }
