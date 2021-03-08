@@ -23,7 +23,7 @@ const getMediaOnly = (e) => {
 
   for (let i = 0; i < obj.length; i += 1) {
     if (!medArray.includes(obj[i].media)) {
-      medArray.push(obj[i].media);
+      medArray.push(obj[i].media); 
     }
   }
   for (let i = 0; i < medArray.length; i += 1) {
