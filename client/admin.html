@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <title>Alignment Chart Creator</title>
+    <link href="default-styles.css" type="text/css" rel="stylesheet" /> 
+    <script>
+        let alignBoxes;
+        let charBoxes;
+        let charSelected = -1;
+        let charObj;
+        let characterSet;
+
+        const handleResponse = (e) => {
+          const obj = JSON.parse(e.target.response); // turn it back into an object
+
+          charObj = obj;
+          // add character images to boxes
+          const imageboxes = document.querySelector('#characters-admin');
+          for (let i = 0; i < obj.length; i += 1) {
+            const cboxdiv = document.createElement('div');
+            cboxdiv.className = "cboxadmin";
+            const cboxp = document.createElement('p');
+            cboxp.className = "contents";
+            const image = document.createElement('img');
+            cboxp.innerHTML = "" + obj[i].char + ", from " + obj[i].media;
+            image.src = obj[i].img;
+            cboxdiv.appendChild(cboxp);
+            cboxdiv.appendChild(image);  
+            imageboxes.appendChild(cboxdiv);
+          }
+        };
+
+        const getCharSet = (set = 'All') => {
+          const fullURL = '/get-characters';
+          const xhr = new XMLHttpRequest();
+          xhr.onload = handleResponse;
+          xhr.open('GET', fullURL);
+          xhr.setRequestHeader('Accept', 'application/javascript');
+          xhr.send();
+        }; 
+
+        const init = () => {
+          getCharSet();
+        };
+
+        window.onload = init;
+    </script>
+  </head>
+  <body>
+    <header>
+      <h1>Alignment Chart Creator</h1>
+    </header>
+          
+      
+<div id="characters-admin">
+</div>
+    
+  </body>
+</html>
