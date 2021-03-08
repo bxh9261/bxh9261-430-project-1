@@ -24,7 +24,7 @@ const sendJSONResponse = (request, response, responseCode, object) => {
   response.writeHead(responseCode, { 'Content-Type': 'application/json' });
   response.write(JSON.stringify(object));
   response.end();
-}; 
+};
 
 // "Meta" refers to *meta data*, in this case the HTTP headers
 const sendJSONResponseMeta = (request, response, responseCode) => {
@@ -63,7 +63,7 @@ const getCharactersJSON = (set = 'All') => {
 };
 
 // return in xml format
-const getRandomJokeXML = (set = 'All') => {
+const getCharactersXML = (set = 'All') => {
   const setFixed = checkSet(set);
 
   let responseXML = '';
@@ -94,11 +94,11 @@ const getCharacterResponse = (request, response, params, acceptedTypes, httpMeth
     if (httpMethod === 'HEAD') {
       response.writeHead(206, {
         'Content-Type': 'text/xml',
-        'Content-Length': getBinarySize(getRandomJokeXML(params.set)),
+        'Content-Length': getBinarySize(getCharactersXML(params.set)),
       });
     } else {
       response.writeHead(200, { 'Content-Type': 'text/xml' });
-      response.write(getRandomJokeXML(params.limit));
+      response.write(getCharactersXML(params.limit));
     }
   } else if (httpMethod === 'HEAD') {
     response.writeHead(206, {
@@ -125,15 +125,15 @@ const addCharacter = (request, response, body) => {
   if (!body.media || !body.char || !body.img) {
     return sendJSONResponse(request, response, responseCode, responseJSON);
   }
-    
+
   // we got params but this character already exists, update image
   const newCharacter = { media: body.media, char: body.char, img: body.img };
-  for (let i = 0; i < characters.length; i+=1){
-      if(characters[i].media === newCharacter.media && characters[i].name === newCharacter.name){
-          responseCode = 204;
-          characters[i].img = newCharacter.img;
-          return sendJSONResponseMeta(request, response, responseCode);
-      }
+  for (let i = 0; i < characters.length; i += 1) {
+    if (characters[i].media === newCharacter.media && characters[i].name === newCharacter.name) {
+      responseCode = 204;
+      characters[i].img = newCharacter.img;
+      return sendJSONResponseMeta(request, response, responseCode);
+    }
   }
 
   // character is new, create new

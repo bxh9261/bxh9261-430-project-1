@@ -12,11 +12,13 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
   '/get-characters': jsonHandler.getCharacterResponse,
-  '/get-all-characters': jsonHandler.getCharacterResponse,
+  '/get-media-names': jsonHandler.getCharacterResponse,
   '/default-styles.css': htmlHandler.getCSSResponse,
   '/main-app.js': htmlHandler.getMainAppJSResponse,
   '/app': htmlHandler.getMainAppResponse,
   '/suggest': htmlHandler.getSuggestResponse,
+  '/admin': htmlHandler.getAdminResponse,
+  '/': htmlHandler.getMainResponse,
   notFound: htmlHandler.get404Response,
 };
 
