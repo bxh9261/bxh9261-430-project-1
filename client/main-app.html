@@ -4,7 +4,7 @@
     <link href="default-styles.css" type="text/css" rel="stylesheet" />
     <script>
         let alignBoxes;
-        let charBoxes;
+        let charBoxes = [];
         let charSelected = -1;
         let charObj;
         let characterSet;
@@ -14,11 +14,20 @@
 
           charObj = obj;
           // add character images to boxes
-          const cboxes = document.querySelectorAll('.cbox');
+          const cboxes = document.querySelector('#character-images');
           for (let i = 0; i < obj.length; i += 1) {
+            const charbox = document.createElement('div');
+            charbox.className = "cbox";  
             const image = document.createElement('img');
             image.src = obj[i].img;
-            cboxes[i].appendChild(image);
+            charbox.appendChild(image);
+            cboxes.appendChild(charbox);
+            charBoxes.push(charbox);
+          }
+            
+          for (let i = 0; i < charBoxes.length; i += 1) {
+            charBoxes[i].addEventListener('click', charClicked);
+            console.log("added event listener to " + i);
           }
         };
 
@@ -39,26 +48,28 @@
         };
 
         const boxReset = () => {
-          for (let i = 0; i < alignBoxes.length; i += 1) {
-            alignBoxes[i].style.backgroundColor = 'green';
-          }
-          for (let i = 0; i < charBoxes.length; i += 1) {
-            // charBoxes[i].style.backgroundColor = 'blue';
-            // going to do this more elegantly later
-            if (charBoxes[i].getElementsByTagName('img').length > 0) {
-              // charBoxes[i].getElementsByTagName('img')[0].style.backgroundColor = 'blue';
-            }
-          }
+          //for character selected border outline, to do later
         };
 
         const alignClicked = (e) => {
           // box on alignment chart was selected
+            
+          let selectedDiv = e.target;               
 
-          boxReset();
+          if(e.target.id === "imgOnChart"){
+              selectedDiv = e.target.parentNode; 
+              console.log(selectedDiv);
+              e.target.remove();
+          }else if(e.target.children.length > 0){
+              e.target.innerHTML = "";
+          }
+
           if (charSelected > -1) {
             const image = document.createElement('img');
             image.src = charObj[charSelected].img;
-            e.target.appendChild(image);
+            image.id = "imgOnChart";
+            //image.addEventListener('click', alignClicked);
+            selectedDiv.appendChild(image);
           }
         };
 
@@ -66,14 +77,18 @@
           // character was selected
 
           boxReset();
-
-          e.target.style.backgroundColor = 'red';
           for (let i = 0; i < charBoxes.length; i += 1) {
             if (e.target === charBoxes[i].getElementsByTagName('img')[0]) {
               charSelected = i;
             }
           }
         };
+        
+        const clearClicked = () => {
+            for(let i = 0; i < alignBoxes.length; i+=1){
+                alignBoxes[i].innerHTML = "";
+            }
+        }
 
         const getCharSet = (set = 'Spongebob') => {
           const jokeURL = '/get-characters';
@@ -95,11 +110,91 @@
         };
 
         const resetChars = () => {
-          for (let i = 0; i < charBoxes.length; i += 1) {
-            charBoxes[i].innerHTML = '';
-          }
+          const cboxes = document.querySelector('#character-images');
+          cboxes.innerHTML = '';
+          charBoxes = [];
           getCharSet(characterSet.options[characterSet.selectedIndex].text);
         };
+        
+        //Do I need to credit myself? This is from https://people.rit.edu/bxh9261/330/exercises/hello-canvas.html
+        const drawChart = () => {
+			
+			// A - canvas variable points at <canvas> tag 
+            var canvas = document.querySelector("canvas");     
+            
+            // B - the ctx variable points at a “2D drawing context” 
+            var ctx = canvas.getContext("2d");     
+            
+            // C - all fill operations are now in yellow 
+            ctx.fillStyle = "white";      
+            
+            // D - fill a rectangle with the current fill color 
+            ctx.fillRect(0,0,690,640);
+            
+            ctx.save();
+            
+            // horizontal alignment 
+            ctx.textAlign = "center"; 
+ 
+            // vertical alignment 
+            ctx.textBaseline = "middle"; 
+			
+			
+			// E - set the current font 
+            ctx.font = "bold 20pt Gloria Hallelujah";      
+            
+            // F - change the current fill color 
+            ctx.fillStyle = "#000000";      
+            
+            // G - draw and fill text using current fill color 
+            ctx.fillText("Lawful",200,85);
+            ctx.fillText("Neutral",370,85);
+            ctx.fillText("Chaotic",540,85);
+            
+            ctx.fillText("Good",75,185);
+            ctx.fillText("Neutral",75,185+170);
+            ctx.fillText("Evil",75,185+340);
+            
+            ctx.restore();
+            
+            ctx.strokeStyle = "black";
+            ctx.lineWidth = 5;
+            
+            ctx.beginPath();
+            
+            //horizontal lines
+            for(let i = 100; i <= 640; i+=170){
+                ctx.moveTo(150,i);     
+                ctx.lineTo(660,i);
+            }
+            
+            //vertical lines
+            for(let i = 150; i <= 690; i+=170){
+                ctx.moveTo(i,100);     
+                ctx.lineTo(i,610);
+            }
+            
+            ctx.closePath();
+            
+            ctx.stroke();
+            
+            for(let i = 0; i < alignBoxes.length; i+=1){
+                //https://stackoverflow.com/questions/6011378/how-to-add-image-to-canvas
+                if(alignBoxes[i].getElementsByTagName('img').length > 0){
+                    base_image = new Image();
+                    base_image.src = alignBoxes[i].getElementsByTagName('img')[0].src;
+                    base_image.width = "130";
+                    base_image.height = "130";
+                    let scale = Math.min(150 / base_image.width, 150 / base_image.height);
+                    ctx.drawImage(base_image, 155+170*(i%3), 105+170*Math.floor(i/3), base_image.width * scale, base_image.height * scale);
+
+                }
+            }
+        }
+        
+        function scaleToFit(img){
+            
+        }
 
         const init = () => {
           getCharSet();
@@ -108,14 +203,17 @@
           for (let i = 0; i < alignBoxes.length; i += 1) {
             alignBoxes[i].addEventListener('click', alignClicked);
           }
-          charBoxes = document.querySelectorAll('.cbox');
-          for (let i = 0; i < charBoxes.length; i += 1) {
-            charBoxes[i].addEventListener('click', charClicked);
-          }
 
           characterSet = document.querySelector('#characterSet');
           characterSet.addEventListener('change', resetChars);
           getMediaOnly();
+            
+          clearButton = document.querySelector("#clear");
+          clearButton.addEventListener('click', clearClicked);
+            
+          createButton = document.querySelector("#create");
+          createButton.addEventListener('click', drawChart);
+            
         };
 
         window.onload = init;
@@ -155,15 +253,15 @@
   </div>
   <div class="box">
 
-    <p class="contents"></p>
+     
   </div>
   <div class="box">
 
-    <p class="contents"></p>
+     
   </div>
   <div class="box">
 
-    <p class="contents"></p>
+     
   </div>
 
   <div class="textbox">
@@ -172,15 +270,15 @@
   </div>
   <div class="box">
 
-    <p class="contents"></p>
+     
   </div>
   <div class="box">
 
-    <p class="contents"></p>
+     
   </div>
   <div class="box">
 
-    <p class="contents"></p>
+     
   </div>
 
   <div class="textbox">
@@ -189,62 +287,42 @@
   </div>
   <div class="box">
 
-    <p class="contents"></p>
+     
   </div>
   <div class="box">
 
-    <p class="contents"></p>
+     
   </div>
   <div class="box">
 
-    <p class="contents"></p>
+     
   </div>
 </div>
       
 <div class="dropdown">
   <select id="characterSet">
   </select>
-</div>      
+</div>  
+      
+<button id="clear">
+    Clear
+</button> 
+      
+<button id="create">
+    Create Chart
+</button> 
+      
+<button id="add">
+    <a href="/suggest">Add Characters</a>
+</button>      
       
 <div id="character-images">
-  <div class="cbox">
-    <p class="contents"></p>
-  </div>
-  <div class="cbox">
 
-    <p class="contents"></p>
-  </div>
-  <div class="cbox">
-
-    <p class="contents"></p>
-  </div>
-  <div class="cbox">
-
-    <p class="contents"></p>
-  </div>
-
-  <div class="cbox">
-
-    <p class="contents"></p>
-  </div>
-  <div class="cbox">
-
-    <p class="contents"></p>
-  </div>
-  <div class="cbox">
-
-    <p class="contents"></p>
-  </div>
-  <div class="cbox">
-
-    <p class="contents"></p>
-  </div>
-
-  <div class="cbox">
-
-    <p class="contents"></p>
-  </div>
 </div>
+      
+    <canvas width="690" height="640">
+		Your browser doesn't support canvas, so an image can not be created.
+	</canvas>
     
   </body>
 </html>

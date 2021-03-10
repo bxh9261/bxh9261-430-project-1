@@ -66,3 +66,7 @@ img{
   background-color: #e40712;
   color: white;
 }
+
+canvas{
+    border: 2px solid #ccc; 
+}
