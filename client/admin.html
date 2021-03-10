@@ -1,7 +1,8 @@
 <html>
   <head>
     <title>Alignment Chart Creator</title>
-    <link href="default-styles.css" type="text/css" rel="stylesheet" /> 
+    <link href="default-styles.css" type="text/css" rel="stylesheet" />
+      
     <script>
         let alignBoxes;
         let charBoxes;
@@ -16,6 +17,13 @@
           // add character images to boxes
           const imageboxes = document.querySelector('#characters-admin');
           for (let i = 0; i < obj.length; i += 1) {
+            if(document.querySelector('#' + obj[i].media) === null){
+                const mediaDiv = document.createElement('div');
+                mediaDiv.id = obj[i].media;
+                imageboxes.appendChild(mediaDiv);
+            }
+            const mediaDivSelected = document.querySelector('#' + obj[i].media);
+              
             const cboxdiv = document.createElement('div');
             cboxdiv.className = "cboxadmin";
             const cboxp = document.createElement('p');
@@ -25,21 +33,52 @@
             image.src = obj[i].img;
             cboxdiv.appendChild(cboxp);
             cboxdiv.appendChild(image);  
-            imageboxes.appendChild(cboxdiv);
+            
+              
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            deleteButton.onclick = function(){
+                deleteCharacter(obj[i].media, obj[i].char);
+            };
+            cboxdiv.appendChild(deleteButton);
+            mediaDivSelected.appendChild(cboxdiv);
           }
         };
+        
+        const handleDeleteResponse = (e) => {
+            const imageboxes = document.querySelector('#characters-admin');
+            imageboxes.innerHTML = "";
+            getAllCharSet();
+        }
 
-        const getCharSet = (set = 'All') => {
-          const fullURL = '/get-characters';
+        const getAllCharSet = () => {
+          const fullURL = '/get-all-characters';
           const xhr = new XMLHttpRequest();
           xhr.onload = handleResponse;
           xhr.open('GET', fullURL);
           xhr.setRequestHeader('Accept', 'application/javascript');
           xhr.send();
         }; 
-
+        
+        const deleteCharacter = (media, character) => {
+            const nameAction = "/remove-character";
+			const nameMethod = "post";
+            
+            const xhr = new XMLHttpRequest();
+			xhr.open(nameMethod,nameAction); // NEW - in the past we've been using "GET"
+			
+			xhr.setRequestHeader('Accept','application/json');
+			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+			
+			xhr.onload = () => handleDeleteResponse(xhr);
+			
+			const formData = `media=${media}&char=${character}`;
+            
+			xhr.send(formData);
+        }
+ 
         const init = () => {
-          getCharSet();
+          getAllCharSet();
         };
 
         window.onload = init;
@@ -47,7 +86,12 @@
   </head>
   <body>
     <header>
-      <h1>Alignment Chart Creator</h1>
+      <div class="topnav">
+        <a href="/">Home</a>
+        <a href="/app">App</a>
+        <a href="/suggest">Suggest</a>
+        <a href="/admin" class="active" >Admin</a>
+      </div>
     </header>
           
       

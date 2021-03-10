@@ -12,9 +12,10 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const urlStruct = {
   '/get-characters': jsonHandler.getCharacterResponse,
-  '/get-media-names': jsonHandler.getCharacterResponse,
+  '/get-all-characters': jsonHandler.getAllCharacterResponse,
   '/default-styles.css': htmlHandler.getCSSResponse,
   '/main-app.js': htmlHandler.getMainAppJSResponse,
+  '/admin-page.js': htmlHandler.getMainAppJSResponse,
   '/app': htmlHandler.getMainAppResponse,
   '/suggest': htmlHandler.getSuggestResponse,
   '/admin': htmlHandler.getAdminResponse,
@@ -42,6 +43,28 @@ const handlePost = (request, response, parsedUrl) => {
 
       const bodyParams = query.parse(bodyString); // turn into an object with .name & .age
       jsonHandler.addCharacter(request, response, bodyParams);
+    });
+  }
+
+  if (parsedUrl.pathname === '/remove-character') {
+    const body = [];
+
+    // https://nodejs.org/api/http.html
+    request.on('error', (err) => {
+      console.dir(err);
+      response.statusCode = 400;
+      response.end();
+    });
+
+    request.on('data', (chunk) => {
+      body.push(chunk);
+    });
+
+    request.on('end', () => {
+      const bodyString = Buffer.concat(body).toString(); // name=tony&age=35
+
+      const bodyParams = query.parse(bodyString); // turn into an object with .name & .age
+      jsonHandler.removeCharacter(request, response, bodyParams);
     });
   }
 };

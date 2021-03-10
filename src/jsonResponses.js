@@ -32,24 +32,24 @@ const sendJSONResponseMeta = (request, response, responseCode) => {
   response.end();
 };
 
-const checkSet = (set = 'All') => {
+const checkSet = (set = 'Spongebob') => {
   for (let i = 0; i < characters.length; i += 1) {
     if (characters[i].media.toLowerCase() === set.toLowerCase()) {
       return set;
     }
   }
-  return 'All';
+  return 'Spongebob';
 };
 
 // return in json format
-const getCharactersJSON = (set = 'All') => {
+const getCharactersJSON = (set = 'Spongebob') => {
   const setFixed = checkSet(set);
 
   const charArray = [{ media: '', char: '', img: '' }];
   let arrayPos = 0;
 
   for (let i = 0; i < characters.length; i += 1) {
-    if (characters[i].media.toLowerCase() === setFixed.toLowerCase() || setFixed === 'All') {
+    if (characters[i].media.toLowerCase() === setFixed.toLowerCase()) {
       charArray[arrayPos] = {
         media: characters[i].media,
         char: characters[i].char,
@@ -63,13 +63,13 @@ const getCharactersJSON = (set = 'All') => {
 };
 
 // return in xml format
-const getCharactersXML = (set = 'All') => {
+const getCharactersXML = (set = 'Spongebob') => {
   const setFixed = checkSet(set);
 
   let responseXML = '';
 
   for (let i = 0; i < characters.length; i += 1) {
-    if (characters[i].media.toLowerCase() === setFixed.toLowerCase() || setFixed === 'All') {
+    if (characters[i].media.toLowerCase() === setFixed.toLowerCase()) {
       const jokeXML = `
         <character>
             <media>${characters[i].media}</media>
@@ -113,6 +113,68 @@ const getCharacterResponse = (request, response, params, acceptedTypes, httpMeth
   response.end();
 };
 
+// return in json format
+const getAllCharactersJSON = () => {
+  const charArray = [{ media: '', char: '', img: '' }];
+
+  for (let i = 0; i < characters.length; i += 1) {
+    charArray[i] = {
+      media: characters[i].media,
+      char: characters[i].char,
+      img: characters[i].img,
+    };
+  }
+
+  return JSON.stringify(charArray);
+};
+
+// return in xml format
+const getAllCharactersXML = () => {
+  let responseXML = '';
+
+  for (let i = 0; i < characters.length; i += 1) {
+    const jokeXML = `
+        <character>
+            <media>${characters[i].media}</media>
+            <char>${characters[i].char}</char>
+            <img>${characters[i].img}</img>
+        </character>
+        `;
+    responseXML = responseXML.concat(jokeXML);
+  }
+
+  return responseXML;
+};
+
+// return xml if accepted, json otherwise
+const getAllCharacterResponse = (request, response, params, acceptedTypes, httpMethod) => {
+  // Source: https://stackoverflow.com/questions/2219526/how-many-bytes-in-a-javascript-string/29955838
+  // Refactored to an arrow function by ACJ
+  const getBinarySize = (string) => Buffer.byteLength(string, 'utf8');
+
+  if (acceptedTypes.includes('text/xml')) {
+    if (httpMethod === 'HEAD') {
+      response.writeHead(206, {
+        'Content-Type': 'text/xml',
+        'Content-Length': getBinarySize(getAllCharactersXML()),
+      });
+    } else {
+      response.writeHead(200, { 'Content-Type': 'text/xml' });
+      response.write(getAllCharactersXML());
+    }
+  } else if (httpMethod === 'HEAD') {
+    response.writeHead(206, {
+      'Content-Type': 'application/json',
+      'Content-Length': getBinarySize(getAllCharactersJSON()),
+    });
+  } else {
+    response.writeHead(200, { 'Content-Type': 'application/json' });
+    response.write(getAllCharactersJSON());
+  }
+
+  response.end();
+};
+
 const addCharacter = (request, response, body) => {
   // here we are assuming an error, pessimistic aren't we?
   let responseCode = 400; // 400=bad request
@@ -129,7 +191,7 @@ const addCharacter = (request, response, body) => {
   // we got params but this character already exists, update image
   const newCharacter = { media: body.media, char: body.char, img: body.img };
   for (let i = 0; i < characters.length; i += 1) {
-    if (characters[i].media === newCharacter.media && characters[i].name === newCharacter.name) {
+    if (characters[i].media === newCharacter.media && characters[i].char === newCharacter.char) {
       responseCode = 204;
       characters[i].img = newCharacter.img;
       return sendJSONResponseMeta(request, response, responseCode);
@@ -145,5 +207,35 @@ const addCharacter = (request, response, body) => {
   return sendJSONResponse(request, response, responseCode, responseJSON);
 };
 
+const removeCharacter = (request, response, body) => {
+  // here we are assuming an error, pessimistic aren't we?
+  let responseCode = 400; // 400=bad request
+  const responseJSON = {
+    id: 'missingParams',
+    message: 'media name and character name are required',
+  };
+
+  // missing params?
+  if (!body.media || !body.char) {
+    return sendJSONResponse(request, response, responseCode, responseJSON);
+  }
+
+  // search for character,
+  const srchChar = { media: body.media, char: body.char };
+  for (let i = 0; i < characters.length; i += 1) {
+    if (characters[i].media === srchChar.media && characters[i].char === srchChar.char) {
+      characters.splice(i, 1);
+      responseCode = 204;
+    }
+  }
+
+  responseJSON.id = srchChar.char;
+  responseJSON.message = 'Deleted Successfully';
+  console.log(`Deleted${srchChar.char}`);
+  return sendJSONResponse(request, response, responseCode, responseJSON);
+};
+
 module.exports.getCharacterResponse = getCharacterResponse;
+module.exports.getAllCharacterResponse = getAllCharacterResponse;
 module.exports.addCharacter = addCharacter;
+module.exports.removeCharacter = removeCharacter;
