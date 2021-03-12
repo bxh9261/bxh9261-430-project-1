@@ -14,8 +14,6 @@ const urlStruct = {
   '/get-characters': jsonHandler.getCharacterResponse,
   '/get-all-characters': jsonHandler.getAllCharacterResponse,
   '/default-styles.css': htmlHandler.getCSSResponse,
-  '/main-app.js': htmlHandler.getMainAppJSResponse,
-  '/admin-page.js': htmlHandler.getMainAppJSResponse,
   '/app': htmlHandler.getMainAppResponse,
   '/suggest': htmlHandler.getSuggestResponse,
   '/admin': htmlHandler.getAdminResponse,

@@ -145,15 +145,17 @@
         //Do I need to credit myself? This is from https://people.rit.edu/bxh9261/330/exercises/hello-canvas.html
         const drawChart = () => {
             
+            // Get the modal
+            let canvasModal = document.querySelector("#canvasModal");
+            canvasModal.style.display = "block";
             
-            let canvas = document.createElement("canvas");
-			canvas.width = "690";
-            canvas.height = "640";
-            canvas.innerHTML = "Your browser doesn't support canvas, so an image can not be created.";
+            let xspan = document.querySelector(".close");
+            xspan.addEventListener('click', closeModal);
             
-            let canvasLoc = document.querySelector("#canvasLoc");
-            canvasLoc.innerHTML = "";
-            canvasLoc.appendChild(canvas);
+            let canvas = document.querySelector("canvas");
+            
+            let download = document.querySelector("#download");
+            download.addEventListener('click', downloadImage);
             
             // B - the ctx variable points at a “2D drawing context” 
             var ctx = canvas.getContext("2d");     
@@ -225,8 +227,18 @@
             }
         }
         
-        function scaleToFit(img){
-            
+        const closeModal = () => {
+            let canvasModal = document.querySelector("#canvasModal");
+            canvasModal.style.display = "none";
+        }
+        
+        //https://stackoverflow.com/questions/8126623/downloading-canvas-element-to-an-image
+        const downloadImage = () => {
+            let download = document.querySelector("#download");
+            let image = document.querySelector("canvas").toDataURL("image/png")
+                .replace("image/png", "image/octet-stream");
+            download.setAttribute("href", image);
+            //download.setAttribute("download","archive.png");
         }
 
         const init = () => {
@@ -335,10 +347,8 @@
 <div id="chartButtons">
     <select id="characterSet">
     </select>  
-    
-    <button id="add">
-        <a href="/suggest">Add Characters</a>
-    </button> 
+        
+    <button onclick="window.location.href='/suggest'">Add Characters</button>
 
     <button id="clear">
         Clear
@@ -353,8 +363,21 @@
 <div id="character-images" class="redbox">
 
 </div>
+     
+<div id="canvasModal" class="modal">     
+      <div class="modal-content" class="redbox">
+        <canvas width="690" height="640">
+		      Your browser doesn't support canvas, so an image can not be created.
+	    </canvas>
+        <span class="close">x</span>
+        <br>
+        <div id="modalButtons">
+            <a id="download" download="alignment-charts.png">
+                <button type="button">Download</button>
+            </a> 
+        </div>  
+      </div>
+</div> 
       
-<div id="canvasLoc"> </div>
-    
-  </body>
+</body>     
 </html>

@@ -20,27 +20,32 @@
             if(document.querySelector('#' + obj[i].media) === null){
                 const mediaDiv = document.createElement('div');
                 mediaDiv.id = obj[i].media;
+                mediaDiv.innerHTML += "<h2>" + obj[i].media + "</h2>";
                 imageboxes.appendChild(mediaDiv);
             }
             const mediaDivSelected = document.querySelector('#' + obj[i].media);
+            
               
             const cboxdiv = document.createElement('div');
             cboxdiv.className = "cboxadmin";
             const cboxp = document.createElement('p');
             cboxp.className = "contents";
             const image = document.createElement('img');
-            cboxp.innerHTML = "" + obj[i].char + ", from " + obj[i].media;
+            cboxp.innerHTML = obj[i].char;
             image.src = obj[i].img;
             cboxdiv.appendChild(cboxp);
             cboxdiv.appendChild(image);  
             
               
+            const deleteDiv = document.createElement("div");
+            deleteDiv.id = "deleteDiv";
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Delete";
             deleteButton.onclick = function(){
                 deleteCharacter(obj[i].media, obj[i].char);
             };
-            cboxdiv.appendChild(deleteButton);
+            deleteDiv.appendChild(deleteButton);  
+            cboxdiv.appendChild(deleteDiv);
             mediaDivSelected.appendChild(cboxdiv);
           }
         };

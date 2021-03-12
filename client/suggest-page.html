@@ -4,7 +4,7 @@
     <link href="default-styles.css" type="text/css" rel="stylesheet" />
 
     <script>
-  	"use strict"; // because I got rid of client-side babel
+  	"use strict";
     const parseJSON = (xhr, content) => {
     	if(xhr.response && xhr.getResponseHeader('Content-Type') === 'application/json'){
       	const obj = JSON.parse(xhr.response);
@@ -16,18 +16,21 @@
       }
     };
 
-    const handleResponse = (xhr) => {
-      const content = document.querySelector('#content');
-      
+    const handleResponse = (xhr, media, charac, image) => {
+      const content = document.querySelector('#suggestContent');
+      const imgHTML = '<img src="' + image + '" alt="' + charac + '" width="100" height="100">'
+        
       switch(xhr.status){
       	case 200:
       		content.innerHTML = '<b>Success!</b>';
       		break;
       	case 201:
-      		content.innerHTML = '<b>Created!</b>';
+      		content.innerHTML = '<b>Created character: ' + charac + ', from ' + media + ', with image: <br>' + imgHTML + '</b>';
+            content.innerHTML += `<p>Note: If you don't see an image above, try a different image link!</p>`;
       		break;
       	case 204:
-      		content.innerHTML = '<b>Updated (No Content)!</b>';
+      		content.innerHTML = '<b>Character Updated, with image: </b> <br>' + imgHTML;
+            content.innerHTML += `<p>Note: If you don't see an image above, try a different image link!</p>`;  
       		break;
       	case 400:
       		content.innerHTML = '<b>Bad Request!</b>';
@@ -62,7 +65,7 @@
 			// in the form below the values are encoded as "name=someValue&age=someValue"
 			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
 			
-			xhr.onload = () => handleResponse(xhr);
+			xhr.onload = () => handleResponse(xhr, mediaField.value, charField.value, imageField.value);
 			
 			const formData = `media=${mediaField.value}&char=${charField.value}&img=${imageField.value}`;
             
@@ -107,29 +110,26 @@
       </div>
     </header>
       
-  <section id="top">
+  <section id="top" class="redbox">
     <h3>Add a Character</h3>
     <form id="nameForm" action="/add-character" method="post">
         <label for="medianame">Name of Media</label>
-      <input type="text" id="medianame" name="medianame"><br><br><br>
+      <input type="text" id="medianame" name="medianame"><br><br>
 
       <div id="char1div">
-          <label for="char1">Character 1:</label>
-          <input type="text" id="char" name="char1"><br>
-          <label for="char1img">Character 1 Image URL:</label>
+          <label for="char1">Character Name:</label>
+          <input type="text" id="char" name="char1"><br><br>
+          <label for="char1img">Character Image URL:</label>
           <input type="text" id="charimg" name="char1img"><br><br>    
       </div>
-        
-      <input type="submit" value="Add User" />
+      <div id="addCharButton">
+          <input type="submit" value="Add User" />
+      </div>
     </form>
-    <p>Go to <a href="/get-all-characters">/get-all-characters</a> to see users.</p>
   </section>
-  <section id="content">
+  <section id="suggestContent" class="redbox">
+      Add a character to the alignment charts app using the form above!
   </section>   
-      
-<div id="form">
-
-</div>
     
   </body>
 </html>
