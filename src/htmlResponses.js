@@ -6,6 +6,7 @@ const mainPage = fs.readFileSync(`${__dirname}/../client/main-app.html`);
 const suggestPage = fs.readFileSync(`${__dirname}/../client/suggest-page.html`);
 const adminPage = fs.readFileSync(`${__dirname}/../client/admin.html`);
 const slashMainPage = fs.readFileSync(`${__dirname}/../client/main-page.html`);
+const previewImage = fs.readFileSync(`${__dirname}/../client/alignment-charts.gif`);
 
 const get404Response = (request, response) => {
   response.writeHead(200, { 'Content-Type': 'text/html' });
@@ -43,9 +44,16 @@ const getMainResponse = (request, response) => {
   response.end();
 };
 
+const getGifImageResponse = (request, response) => {
+  response.writeHead(200, { 'Content-Type': 'image/gif' });
+  response.write(previewImage);
+  response.end();
+};
+
 module.exports.get404Response = get404Response;
 module.exports.getCSSResponse = getCSSResponse;
 module.exports.getMainAppResponse = getMainAppResponse;
 module.exports.getSuggestResponse = getSuggestResponse;
 module.exports.getAdminResponse = getAdminResponse;
 module.exports.getMainResponse = getMainResponse;
+module.exports.getGifImageResponse = getGifImageResponse;
