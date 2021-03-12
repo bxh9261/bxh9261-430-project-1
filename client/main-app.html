@@ -15,15 +15,29 @@
           charObj = obj;
           // add character images to boxes
           const cboxes = document.querySelector('#character-images');
+          if(obj.length < 9){
+              cboxes.style.width = obj.length*6 + "%";
+          }
+          else{ 
+              cboxes.style.width = "54%";
+          }    
           for (let i = 0; i < obj.length; i += 1) {
-            const charbox = document.createElement('div');
+            const charbox = document.createElement('div');  
             charbox.className = "cbox";  
+            if(obj.length < 9){
+              charbox.style.width = 100/obj.length + "%";
+            }
+            else{
+              charbox.style.width = "11.11%";
+            }    
             const image = document.createElement('img');
             image.src = obj[i].img;
             charbox.appendChild(image);
             cboxes.appendChild(charbox);
             charBoxes.push(charbox);
           }
+            
+          
             
           for (let i = 0; i < charBoxes.length; i += 1) {
             charBoxes[i].addEventListener('click', charClicked);
@@ -48,7 +62,16 @@
         };
 
         const boxReset = () => {
-          //for character selected border outline, to do later
+          for(let i = 0; i < charBoxes.length; i+=1){
+              if(i === charSelected){
+                  charBoxes[i].style.border = "#E40712 5px solid";
+                  charBoxes[i].style.backgroundColor = "#979AA4";
+              }
+              else{
+                  charBoxes[i].style.border = "black 3px solid";
+                  charBoxes[i].style.backgroundColor = "#ddd";
+              }
+          }
         };
 
         const alignClicked = (e) => {
@@ -76,12 +99,14 @@
         const charClicked = (e) => {
           // character was selected
 
-          boxReset();
+          
           for (let i = 0; i < charBoxes.length; i += 1) {
             if (e.target === charBoxes[i].getElementsByTagName('img')[0]) {
               charSelected = i;
             }
           }
+            
+          boxReset();
         };
         
         const clearClicked = () => {
@@ -114,13 +139,21 @@
           cboxes.innerHTML = '';
           charBoxes = [];
           getCharSet(characterSet.options[characterSet.selectedIndex].text);
+          charSelected = -1;
         };
         
         //Do I need to credit myself? This is from https://people.rit.edu/bxh9261/330/exercises/hello-canvas.html
         const drawChart = () => {
-			
-			// A - canvas variable points at <canvas> tag 
-            var canvas = document.querySelector("canvas");     
+            
+            
+            let canvas = document.createElement("canvas");
+			canvas.width = "690";
+            canvas.height = "640";
+            canvas.innerHTML = "Your browser doesn't support canvas, so an image can not be created.";
+            
+            let canvasLoc = document.querySelector("#canvasLoc");
+            canvasLoc.innerHTML = "";
+            canvasLoc.appendChild(canvas);
             
             // B - the ctx variable points at a “2D drawing context” 
             var ctx = canvas.getContext("2d");     
@@ -230,24 +263,24 @@
       </div>
     </header>
       
-<div id="container">
-  <div class="textbox">
-    <p class="contents">Generic Alignment Chart</p>
+<div id="container" class="redbox">
+  <div class="textboxXY">
+    <p class="contents">Generic</p>
   </div>
-  <div class="textbox">
+  <div class="textboxX">
 
     <p class="contents">LAWFUL</p>
   </div>
-  <div class="textbox">
+  <div class="textboxX">
 
     <p class="contents">NEUTRAL</p>
   </div>
-  <div class="textbox">
+  <div class="textboxX">
 
     <p class="contents">CHAOTIC</p>
   </div>
 
-  <div class="textbox">
+  <div class="textboxY">
 
     <p class="contents">GOOD</p>
   </div>
@@ -264,7 +297,7 @@
      
   </div>
 
-  <div class="textbox">
+  <div class="textboxY">
 
     <p class="contents">NEUTRAL</p>
   </div>
@@ -281,7 +314,7 @@
      
   </div>
 
-  <div class="textbox">
+  <div class="textboxY">
 
     <p class="contents">EVIL</p>
   </div>
@@ -298,31 +331,30 @@
      
   </div>
 </div>
+   
+<div id="chartButtons">
+    <select id="characterSet">
+    </select>  
+    
+    <button id="add">
+        <a href="/suggest">Add Characters</a>
+    </button> 
+
+    <button id="clear">
+        Clear
+    </button> 
+
+    <button id="create">
+        Create Chart
+    </button>  
+</div>      
+    
       
-<div class="dropdown">
-  <select id="characterSet">
-  </select>
-</div>  
-      
-<button id="clear">
-    Clear
-</button> 
-      
-<button id="create">
-    Create Chart
-</button> 
-      
-<button id="add">
-    <a href="/suggest">Add Characters</a>
-</button>      
-      
-<div id="character-images">
+<div id="character-images" class="redbox">
 
 </div>
       
-    <canvas width="690" height="640">
-		Your browser doesn't support canvas, so an image can not be created.
-	</canvas>
+<div id="canvasLoc"> </div>
     
   </body>
 </html>
