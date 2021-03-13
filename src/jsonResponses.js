@@ -32,7 +32,7 @@ const sendJSONResponseMeta = (request, response, responseCode) => {
   response.end();
 };
 
-//check param against list of params. if it's not listed as media for anyone, return to spongebob characters
+// check param against list. if it's not listed as media for anyone, return to spongebob characters
 const checkSet = (set = 'Spongebob') => {
   for (let i = 0; i < characters.length; i += 1) {
     if (characters[i].media.toLowerCase() === set.toLowerCase()) {
@@ -176,7 +176,7 @@ const getAllCharacterResponse = (request, response, params, acceptedTypes, httpM
   response.end();
 };
 
-//add a new character
+// add a new character
 const addCharacter = (request, response, body) => {
   // here we are assuming an error, pessimistic aren't we?
   let responseCode = 400; // 400=bad request
@@ -209,7 +209,7 @@ const addCharacter = (request, response, body) => {
   return sendJSONResponse(request, response, responseCode, responseJSON);
 };
 
-//remove character if asked to delete
+// remove character if asked to delete
 const removeCharacter = (request, response, body) => {
   // here we are assuming an error, pessimistic aren't we?
   let responseCode = 400; // 400=bad request
@@ -234,7 +234,6 @@ const removeCharacter = (request, response, body) => {
 
   responseJSON.id = srchChar.char;
   responseJSON.message = 'Deleted Successfully';
-  console.log(`Deleted${srchChar.char}`);
   return sendJSONResponse(request, response, responseCode, responseJSON);
 };
 
