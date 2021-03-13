@@ -1,13 +1,14 @@
 What your site does and its purpose.
 
-My site allows the user to create alignment charts 
+My site allows the user to create alignment charts, either from characters pre-loaded into the API or characters uploaded on the /suggest page.
 
 What part of your app does the API handle?
 
-
+The API loads in the character list on the main app page. The params allow it to be sorted by the media the character appears in.
 
 What went right and what went wrong?
 
+I created an app that I think meets all the requirements, what went wrong is I didn't have as much time as I expected to be able to implement the ideas I mention in the next question:
 
 If you were to continue, what would you do to improve your app?
 
@@ -15,7 +16,19 @@ I have many ideas:
 -customizable options for box labels, so the chart doesn't just need to be labeled with "good, neutral, evil, lawful, etc"
 -more canvas customization to pretty up the downloadable image
 -the ability to upload charts for others to view
+-get better at CSS or use bootstrap/bulma/etc
 
 
 How did you go above and beyond?
+
+I used canvas to create the chart and allow the user to download the image. The complex functionality of the chart creator, other than displaying the character list from the api, went beyond the project requirements as well.
+
+Sources:
+https://www.w3schools.com/howto/howto_js_topnav.asp - for top navigator
+https://stackoverflow.com/questions/39517793/how-can-we-make-a-4-by-4-grid-using-css - the alignment chart divs
+https://stackoverflow.com/questions/6011378/how-to-add-image-to-canvas - add an image to canvas
+https://stackoverflow.com/questions/8126623/downloading-canvas-element-to-an-image - download the canvas via button click
+body parse and POST class demos
+https://people.rit.edu/bxh9261/330/exercises/hello-canvas.html - my old canvas project
+
 
