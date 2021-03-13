@@ -9,12 +9,14 @@
         let charObj;
         let characterSet;
 
+        
         const handleResponse = (e) => {
           const obj = JSON.parse(e.target.response); // turn it back into an object
 
           charObj = obj;
           // add character images to boxes
           const cboxes = document.querySelector('#character-images');
+          //lots of CSS updating to fit in the specific number of characters    
           if(obj.length < 9){
               cboxes.style.width = obj.length*6 + "%";
           }
@@ -38,13 +40,13 @@
           }
             
           
-            
+          //give each the ability to be added to the chart
           for (let i = 0; i < charBoxes.length; i += 1) {
             charBoxes[i].addEventListener('click', charClicked);
-            console.log("added event listener to " + i);
           }
-        };
+        }; 
 
+        //get JUST the media names to populate the dropdown menu
         const handleMediaOnly = (e) => {
           const obj = JSON.parse(e.target.response); // turn it back into an object
           const medArray = [];
@@ -59,8 +61,13 @@
             option.innerHTML = medArray[i];
             characterSet.appendChild(option);
           }
+            
+          const allOption = document.createElement('option');
+          allOption.innerHTML = "ALL";
+          characterSet.appendChild(allOption);     
         };
 
+        //click and unclick box
         const boxReset = () => {
           for(let i = 0; i < charBoxes.length; i+=1){
               if(i === charSelected){
@@ -74,6 +81,7 @@
           }
         };
 
+        //place an item... whether use clicks on the div or directly on the image currently on the board
         const alignClicked = (e) => {
           // box on alignment chart was selected
             
@@ -99,7 +107,6 @@
         const charClicked = (e) => {
           // character was selected
 
-          
           for (let i = 0; i < charBoxes.length; i += 1) {
             if (e.target === charBoxes[i].getElementsByTagName('img')[0]) {
               charSelected = i;
@@ -109,12 +116,24 @@
           boxReset();
         };
         
+        //clear button selected. remove all chart images.
         const clearClicked = () => {
             for(let i = 0; i < alignBoxes.length; i+=1){
                 alignBoxes[i].innerHTML = "";
             }
         }
+        
+        //get all characters
+        const getAllCharSet = () => {
+          const fullURL = '/get-all-characters';
+          const xhr = new XMLHttpRequest();
+          xhr.onload = handleResponse;
+          xhr.open('GET', fullURL);
+          xhr.setRequestHeader('Accept', 'application/javascript');
+          xhr.send();
+        };
 
+        //get a set of characters
         const getCharSet = (set = 'Spongebob') => {
           const jokeURL = '/get-characters';
           const fullURL = jokeURL.concat(`?set=${set}`);
@@ -125,6 +144,7 @@
           xhr.send();
         };
         
+        //get all characters but do something different with it (just get media values)
         const getMediaOnly = () => {
           const fullURL = '/get-all-characters';
           const xhr = new XMLHttpRequest();
@@ -134,11 +154,18 @@
           xhr.send();
         };
 
+        //get new characters on dropdown selected
         const resetChars = () => {
           const cboxes = document.querySelector('#character-images');
           cboxes.innerHTML = '';
           charBoxes = [];
-          getCharSet(characterSet.options[characterSet.selectedIndex].text);
+          let selText = characterSet.options[characterSet.selectedIndex].text;
+          if(selText === "ALL"){
+              getAllCharSet();
+          }
+          else{
+              getCharSet(selText);
+          }
           charSelected = -1;
         };
         
@@ -190,6 +217,10 @@
             ctx.fillText("Neutral",75,185+170);
             ctx.fillText("Evil",75,185+340);
             
+            ctx.font = "bold 10pt Arial";
+            
+            ctx.fillText("Created with alignment-charts.herokuapp.com", 520, 630);
+            
             ctx.restore();
             
             ctx.strokeStyle = "black";
@@ -227,6 +258,7 @@
             }
         }
         
+        //X button on modal
         const closeModal = () => {
             let canvasModal = document.querySelector("#canvasModal");
             canvasModal.style.display = "none";

@@ -4,6 +4,8 @@
     <link href="default-styles.css" type="text/css" rel="stylesheet" />
 
     <script>
+        
+    //get message from JSON to display    
   	"use strict";
     const parseJSON = (xhr, content) => {
     	if(xhr.response && xhr.getResponseHeader('Content-Type') === 'application/json'){
@@ -16,6 +18,7 @@
       }
     };
 
+    //handle error number
     const handleResponse = (xhr, media, charac, image) => {
       const content = document.querySelector('#suggestContent');
       const imgHTML = '<img src="' + image + '" alt="' + charac + '" width="100" height="100">'
@@ -35,6 +38,10 @@
       	case 400:
       		content.innerHTML = '<b>Bad Request!</b>';
       		break;
+        //important
+        case 418:
+            content.innerHTML = '<b>I am a teapot!<b>';
+            break;
       	default:
       		content.innerHTML = '<b>Error code not implemented by client</b>';
       }
@@ -42,6 +49,7 @@
       parseJSON(xhr,content);
     };
 
+    //from body parse and POST demo on mycourses
     const sendPost = (e, nameForm) => {
 			e.preventDefault();
 			
@@ -53,47 +61,56 @@
             const mediaField = nameForm.querySelector("#medianame")
 			
 			const xhr = new XMLHttpRequest();
-			xhr.open(nameMethod,nameAction); // NEW - in the past we've been using "GET"
+			xhr.open(nameMethod,nameAction);
 			
 			xhr.setRequestHeader('Accept','application/json');
 			xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-			// what is "x-www-form-urlencoded"
-			// for GET we already saw it - ex. "/unauthorized?loggedIn=yes&valid=true"
-			// everything after the question mark is urlencoded
-			// multiple key=value pairs are separated by the &
-			// HTML forms also encode their values this way
-			// in the form below the values are encoded as "name=someValue&age=someValue"
-			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
 			
 			xhr.onload = () => handleResponse(xhr, mediaField.value, charField.value, imageField.value);
 			
 			const formData = `media=${mediaField.value}&char=${charField.value}&img=${imageField.value}`;
             
-			xhr.send(formData); // NEW - in the past we haven't been sending anything here because ...
-			// ... our data has always been encoded in the URL
-			/// ... instead of being in a separate file as it is now
-			
-			/*
-				Things to try:
-				1) Add new users, we should see "201 Created" status code
-				- look in the Request tab of the debugger to see the form data
-				- Recall that every time the server reboots we lose our data because `users` in jsonResponses.js is re-initialized 
-				2) Update a new user (i.e. send the same name) again - we'll see "204 No Content"
-				3) Leave off name or age and get back a "400 Bad Request"
-				4) In the debugger, you can see that the Network request is being made via XHR
-				5) Disable the XHR and you can see the Network request is being made via the form (and we're getting taken to a new page)
-				6) Re-enable the XHR and get rid of the `action` and `method` of the form and make the XHR work
-			*/
+			xhr.send(formData);
 			
 			return false; // prevents event bubbling
     };
+        
+    //client-side checking for errors before posting
+    const addChar = (e) => {
+        const charField = nameForm.querySelector("#char");
+        const imageField = nameForm.querySelector("#charimg");
+        const mediaField = nameForm.querySelector("#medianame");
+        
+        if(startsWithLetter(charField.value) && 
+           startsWithLetter(imageField.value) &&
+           startsWithLetter(mediaField.value)){
+             sendPost(e, nameForm);
+        } 
+        else{
+            const content = document.querySelector('#suggestContent');
+            content.innerHTML = '<b>One or more values is invalid! Values should start with a letter.</b>';
+            e.preventDefault();
+        }
+    };
+        
+    //starting with anything but a letter messes things up
+    const startsWithLetter = (str) => {
+        if(str.length === 0){
+            return false;
+        }
+        
+        let codeZ = str.charCodeAt(0);
+        if(!(codeZ > 64 && codeZ < 91) && !(codeZ > 96 && codeZ < 123)){
+            return false;
+        }
+        
+        return true;
+    }
 
     const init = () => {
       const nameForm = document.querySelector('#nameForm');
       
-      const addUser = (e) => sendPost(e, nameForm);
-      
-     	nameForm.addEventListener('submit', addUser);
+      nameForm.addEventListener('submit', addChar);
     };
 
     window.onload = init;
@@ -123,7 +140,7 @@
           <input type="text" id="charimg" name="char1img"><br><br>    
       </div>
       <div id="addCharButton">
-          <input type="submit" value="Add User" />
+          <input type="submit" value="Add Character" />
       </div>
     </form>
   </section>
