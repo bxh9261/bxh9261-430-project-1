@@ -1,0 +1,21 @@
+What your site does and its purpose.
+
+My site allows the user to create alignment charts 
+
+What part of your app does the API handle?
+
+
+
+What went right and what went wrong?
+
+
+If you were to continue, what would you do to improve your app?
+
+I have many ideas:
+-customizable options for box labels, so the chart doesn't just need to be labeled with "good, neutral, evil, lawful, etc"
+-more canvas customization to pretty up the downloadable image
+-the ability to upload charts for others to view
+
+
+How did you go above and beyond?
+

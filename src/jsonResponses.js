@@ -32,6 +32,7 @@ const sendJSONResponseMeta = (request, response, responseCode) => {
   response.end();
 };
 
+//check param against list of params. if it's not listed as media for anyone, return to spongebob characters
 const checkSet = (set = 'Spongebob') => {
   for (let i = 0; i < characters.length; i += 1) {
     if (characters[i].media.toLowerCase() === set.toLowerCase()) {
@@ -98,7 +99,7 @@ const getCharacterResponse = (request, response, params, acceptedTypes, httpMeth
       });
     } else {
       response.writeHead(200, { 'Content-Type': 'text/xml' });
-      response.write(getCharactersXML(params.limit));
+      response.write(getCharactersXML(params.set));
     }
   } else if (httpMethod === 'HEAD') {
     response.writeHead(206, {
@@ -175,6 +176,7 @@ const getAllCharacterResponse = (request, response, params, acceptedTypes, httpM
   response.end();
 };
 
+//add a new character
 const addCharacter = (request, response, body) => {
   // here we are assuming an error, pessimistic aren't we?
   let responseCode = 400; // 400=bad request
@@ -207,6 +209,7 @@ const addCharacter = (request, response, body) => {
   return sendJSONResponse(request, response, responseCode, responseJSON);
 };
 
+//remove character if asked to delete
 const removeCharacter = (request, response, body) => {
   // here we are assuming an error, pessimistic aren't we?
   let responseCode = 400; // 400=bad request

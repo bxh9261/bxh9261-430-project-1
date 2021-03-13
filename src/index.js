@@ -68,7 +68,7 @@ const handlePost = (request, response, parsedUrl) => {
   }
 };
 
-// 7 - this is the function that will be called every time a client request comes in
+// this is the function that will be called every time a client request comes in
 // this time we will look at the `pathname`, and send back the appropriate page
 // note that in this course we'll be using arrow functions 100% of the time in our server-side code
 const onRequest = (request, response) => {
@@ -94,7 +94,5 @@ const onRequest = (request, response) => {
   }
 };
 
-// 8 - create the server, hook up the request handling function, and start listening on `port`
+// create the server, hook up the request handling function, and start listening on `port`
 http.createServer(onRequest).listen(port);
-
-//
